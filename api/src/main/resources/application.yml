@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: pilot-api
+  datasource:
+    # En Azure las inyecta la Container App (ver infra/main.bicep).
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/hotel_presidente}
+    username: ${DATABASE_USERNAME:hotel_presidente}
+    password: ${DATABASE_PASSWORD:hotel_presidente}
+    hikari:
+      # Escala a cero: que la app arranque aunque la base aún no responda.
+      initialization-fail-timeout: -1
+
+server:
+  port: ${PORT:8080}
+  forward-headers-strategy: ${FORWARD_HEADERS_STRATEGY:none}
+
+management:
+  endpoint:
+    health:
+      show-components: always
+  endpoints:
+    web:
+      cors:
+        # El frontend (Static Web App) consulta /actuator/health.
+        allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:8081}
+        allowed-methods: GET
